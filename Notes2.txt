@@ -1,0 +1,21 @@
+// These contains notes of sections after 29
+
+Go commands
+1. `go run`, this command compiles code in one or more file and immediately executes them.
+2. `go build`, this command code in one or more files. It creates an executable file that can be run whenever needed.
+3. `go install`, compiles and installs a package.
+4. `go get`, downloads the raw source code of someone else's package.
+
+Go Packages
+1. Package == Project
+2. A package is a collection of common source code files.
+3. Each go file belongs to a package.
+4. The files serving common objective or files belong to a particular project should belong to same package.
+5. There are 2 types of packages in Go:
+    5.1. Executable type, these, when compiled, generates a file that we can run.
+    5.2. Reusable type, these are used as helpers to other projects/packages. These are like code dependencies or libraries.
+6. The name of the package defines whether the package is an executable type or reusable type.
+7. The word `main` is used to make an executable type package, `package main`. `package main` ---> go build ---> main.exe. When the main.exe is executed, the main() present in the function will automatically gets executed.
+8. Any other work, except `main`, on building, will not give an executable file. `package <anything>` ---> go build ---> nothing!!.
+9. Note, the files that are under package main must have a main() inside them. It means, out of all the files under `package main`, only one file should have main().
+
