@@ -19,3 +19,75 @@ Go Packages
 8. Any other work, except `main`, on building, will not give an executable file. `package <anything>` ---> go build ---> nothing!!.
 9. Note, the files that are under package main must have a main() inside them. It means, out of all the files under `package main`, only one file should have main().
 
+import <package>
+1. The importing of package is done so that our current package can have access to the code inside the imported package.
+2. Some packages come as part of standard library of Go like "fmt". You can read about them on `golang.org/pkg`
+
+Declaring Variables
+1. Go is a statically typed language, means we need to predefine the type of variable
+2. Method 1 :- var <variable-name> <variable-type> = <value>, eg. `var name string = "Aniket Hans"`.
+3. Method 2 :- <variable-name> := <value>, eg `name := "Aniket Hans"`
+4. The `:=` will only be used at the time of declaring the variable, not while re-assigning value to it. E.g `name := "Aniket Hans"; name = "AH"`
+5. You can't declare global variables using `:=`, you have to use `var` for declaring global variables.
+6. If you dont use any declared variable in your code, then Go will throw error.
+
+Function Declarations
+1. Syntax:-  `func <function-name>() <return-type> {}`. E.g. `func getName() string{}`
+
+Arrays
+1. Fixed length list of records
+2. Every element in a array should be of same type.
+
+Slice
+1. Slice is an array that can grow or shrink.
+2. Every element in a slice should be of same type.
+3. Syntax:-  `<variable> := []<type of slice>{data1,data2}`, eg. cards := []string{"ace of spade", "king of hearts"}
+             `var <variable> = []<type of slice>{data1,data2}`, eg. var cards = []string{"ace of spade", "king of hearts"}
+4. Adding new element to slice, `<slice-variable> = append(<slice-variable>, <new value>)`, e.g. cards = append(cards,"Queen of Diamonds")
+5. `append()` does not modify the existing slice, instead it returns a new slice which is assigned back to the variable.
+
+For loop
+1. Looping over a slice, `for <index variable>, <value> := range <slice-variable> {}`
+
+OOPs in Go
+1. Go is not an Object Oriented Programming language as there are no classes in Go.
+2. In classes, we have properties (variable) in classes and methods (functions inside class), which use the properties to perform operations and give some result.
+3. In Go, we first create a custom type and then make a receiver function that will receives the object/variable of custom type to perform some operations and give result.
+4. The custom type can be a string, []string, struct etc.
+
+Defining type
+1. Syntax: `type <type-name> <type>` e.g making a type of []string, `type name []string`. Here, name will have all the properties of []string.
+2. Both of these are similar:-
+    2.1. humans := []string{"AH","DH"}
+    2.2. humans := name{"AH","DH"}
+
+Receiver function
+1. Syntax:- `func (<variable> <type-of-variable>) <function-name>() <return-type>{}`
+2. E.g. for type name, func (n name) printNames() {}
+3. The receiver function printNames here will have access to the `n` variable which is of type []string and can perform oerations on it.
+4. The receiver function is called using the object/variable of type `name`, eg. humans.printNames()
+5. We can consider, loosely, the variable defined using `type` as class and properties and the receiver function as class methods which can be invoked by objects of type defined and the methods have access to the properties of calling object.
+6. `type name []string                  // Its like declaring class name with one property of type []string
+    func (n name) printNames(){         // Its like defining the method of class name
+        for i, name := range n{
+            fmt.Println(i,name)
+        }
+    }
+
+
+    humans := name{"AH","DH"}           // Its like initializing object humans of name class. 
+    humans.printNames()                 // class objects can be used to call the class methods
+    `
+7. Note, we have created name of type []string and attached printNames() method to it. You might be thinking, can we create an object of type []string and then try to call printNames(), like :-
+   `humans2 := []string{"AH","DH"}
+    humans2.printNames() //This will throw an error.
+   `
+   name has kind of inherited the properties of []string and we have enhanced it with printNames() method. The printNames() method is available for object of type name and not []string.
+8. Thus, name and []string are diffrent.
+9. The receiver, say `n`, can be of pointer type as well.
+   `func (n *name) func1(){}  // It is similar to call by reference, any changes made in func1 on n will be refrlected to n1.
+    func (n name)  func2(){}  // It is similar to call by value, any changes made in func2 on n will not be reflected to n2.
+
+    n1.func1()
+    n2.func2()
+   `
