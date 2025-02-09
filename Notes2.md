@@ -70,11 +70,14 @@
 2. Both of these are similar:-
    1. humans := []string{"AH","DH"}
    2. humans := name{"AH","DH"}
+3. We can also define type on primitive data types. Eg. `type customString string`. We can define customType variables in 2 types:
+   1. Using var, `var s1 customString = "hello"`
+   2. Using :=, `s2 := customString("hi")`
 
 ### Receiver function
 
 1. Syntax:- `func (<variable> <type-of-variable>) <function-name>() <return-type>{}`
-2. E.g. for type name, func (n name) printNames() {}
+2. E.g. for type name, `func (n name) printNames() {}`
 3. The receiver function printNames here will have access to the `n` variable which is of type []string and can perform oerations on it.
 4. The receiver function is called using the object/variable of type `name`, eg. humans.printNames()
 5. We can consider, loosely, the variable defined using `type` as class and properties and the receiver function as class methods which can be invoked by objects of type defined and the methods have access to the properties of calling object.
@@ -105,4 +108,39 @@
 
    n1.func1()
    n2.func2()
+   ```
+
+### Slices
+
+1. Slices are zero indexed.
+2. Slice range syntax:- `<slice-name> [startIncludingIndex : uptoNotIncluding]`
+3. Eg:
+   ```go
+   var s = []int32{10,20,30,40}
+   s[0:2] // [10,20]
+   ```
+4. We can omit either of `startIncludingIndex` or `uptoNotIncluding`.
+   ```go
+   var s = []int32{10,20,30,40}
+   s[0:2] // [10,20]
+   s[:3] // [10,20,30]
+   s[1:] // [20,30,40]
+   ```
+
+### Returning multiple values
+
+1. A function can return multiple values.
+2. Syntax:
+   ```go
+   func func1(param1 string, param2 int) (int,string){
+      return param2*10, param1+"Hi"
+   }
+   ```
+   - Here, we are returning 2 values of type int and string respectively from the function func1.
+3. Note: functions that are defined in the same package can be used in any of the files without any import, given the files also belong to the same package.
+4. When the function called, the number of variables, that will be holding the retunred values from the called function, will be equal to the number of returning values from the function.
+   ```go
+   // If a function, say func1() (string,int){}, returns 2 values
+   ret1 := func1() // This will give Error as only one variable is collecting the values returned by the func1()
+   ret2, ret3 := func1() // This is alright as the returning 2 values are captured in 2 variables respectively.
    ```

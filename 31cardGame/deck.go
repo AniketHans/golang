@@ -33,3 +33,7 @@ func (d deck) addCard(){
 	d.printCards()
 	fmt.Println("*****Leaving addCards()*****")
 }
+
+func deal(d deck, handsize int) (deck,deck) {
+	return d[:handsize],d[handsize:]
+}

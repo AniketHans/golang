@@ -1,5 +1,7 @@
 package main
 
+import "fmt"
+
 func main() {
 	// fmt.Println("Welcome to card game")
 	// cards := deck{"Ace of Diamonds","King of Hearts"}
@@ -13,4 +15,8 @@ func main() {
 
 	cards := newDeck()
 	cards.printCards()
+	fmt.Println("******************")
+	hand, remainindDeck := deal(cards, 5)
+	hand.printCards()
+	remainindDeck.printCards()
 }
