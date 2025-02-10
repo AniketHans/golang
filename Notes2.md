@@ -110,15 +110,33 @@
    n2.func2()
    ```
 
+10. Functions with a reciever tells that an object of type of the reciever can use the function usinf dot(.) notation.
+
+    ```go
+    type newString string
+    func (ns newString) func1(param1 string) string{
+      return ns + " " + param1
+    }
+    s1 := "a"
+    s1.func1() // ERROR as func1 does not exist on type string
+
+    s2 := newString("b")
+    fmt.Println(s2.func1("c")) // b c
+    ```
+
+    - Here, s2 is of type newString and all the objects of type newString can access the func1()
+
 ### Slices
 
 1. Slices are zero indexed.
 2. Slice range syntax:- `<slice-name> [startIncludingIndex : uptoNotIncluding]`
 3. Eg:
+
    ```go
    var s = []int32{10,20,30,40}
    s[0:2] // [10,20]
    ```
+
 4. We can omit either of `startIncludingIndex` or `uptoNotIncluding`.
    ```go
    var s = []int32{10,20,30,40}
@@ -144,3 +162,77 @@
    ret1 := func1() // This will give Error as only one variable is collecting the values returned by the func1()
    ret2, ret3 := func1() // This is alright as the returning 2 values are captured in 2 variables respectively.
    ```
+
+### Saving things to file
+
+1. Whenever we need to work with the underlying hardware/OS, we can look into the Go's standard library packages for some solution.
+2. The package we use to deal with underlying harddrive is `ioutil`.
+3. We can use the `WriteFile(filename string, data []byte, perm os.FileMode) error`
+4. Eg, `ioutil.WriteFile(a.txt, []byte("hello"),0666)`
+
+### Byte Slice ([]byte)
+
+1. Byte slice is related to the string of characters.
+2. It is a slice containing ascii code of a string characters.
+3. For example: "Hi there!!" (string) ---> [72 105 32 116 104 101 114 101 33] (Byte slice)
+4. We need to use byte slice in many functions in Go.
+5. String to byte slice: `[]byte("Hi there!")`
+
+### Type Conversion
+
+1. Syntax for type conversion: `<type-we-want-to-convert-to>(value)`
+2. Eg: `[]byte("Hi there!")`, here we are converting a string into a byte slice.
+
+### Retrieving data from file
+
+1. We can use `ReadFile(filename string) ([]byte,error){}` function.
+
+### os package
+
+1. Package os provides a platform independent interface to operating system functionality. It means whether you are running the program on any of the operating system, some functions like Exit(), Chmod() from the os package will work on all of themc .
+2. For eg:, `os.Exit(1)` will exit the program with an indication that the program had some error.
+
+### Declaring parameter types in functions
+
+1. We can define function parameter types in the following ways:
+
+   1. ```go
+      func func1(s string,p string){
+         fmt.Printf("%T,%T",s,p)
+      }
+      func1("a","b") // string,string
+      ```
+      - Here, we have defined the type of the parameter against each of the parameters.
+   2. ```go
+      func func2(s,p string){
+         fmt.Printf("%T,%T",s,p)
+      }
+      func2("a","b") // string,string
+
+      func func3(a int, b,c,d string,e float32){
+         fmt.Printf("\n%T,%T,%T,%T,%T",a,b,c,d,e)
+      }
+      func3(1,"a","b","c",1.2) // int,string,string,string,float32
+      ```
+
+      - Here, we have eleminated writing parameter type for some of the parameters and they are by default considered to have taken the type of the successive paramter which is defined like s in func2 have taken the type of p i.e. string and similarly b and c has taken the type of d i.e. string
+
+### Swapping variables
+
+1. We can swap 2 variables in the following simple way:- `a,b = b,a`, like we do in python
+
+### rand.Intn(limit)
+
+1. rand.Intn() is refered to as pseudo random generator.
+2. Go, by default, uses a random generator that uses a seed value. This seed is like the source of randomness.
+3. It means the seed value is fed to the generator and generator generates a random value.
+4. By default, Go random generators use the same seed thus the random values generated are same each time.
+5. We have to change the value of seed if we want a true random value each time.
+
+### Testing with go
+
+1. With Go, we get very limited set of functions to test our code.
+2. To make a test, create a new file ending with **\_test.go**
+3. To run all the tests in a package, run command `go test`
+4. The function name should be like `func Test<name-of-test-function>(){}`
+5. The test function is going to be automatically called by the go test runner with an argument `t *testing.T`

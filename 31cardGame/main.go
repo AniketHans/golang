@@ -19,4 +19,13 @@ func main() {
 	hand, remainindDeck := deal(cards, 5)
 	hand.printCards()
 	remainindDeck.printCards()
+	fmt.Println(cards.toString())
+	cards.saveToFile("my_cards")
+
+	newCards := newDeckFromFile("my_cards")
+	fmt.Println("<-------------------------- CARDS -------------------------->\n",newCards)
+
+	newCards.shuffle()
+	fmt.Println("<-------------------------- SHUFFLED CARDS -------------------------->")
+	newCards.printCards()
 }
