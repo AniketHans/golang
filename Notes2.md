@@ -236,3 +236,222 @@
 3. To run all the tests in a package, run command `go test`
 4. The function name should be like `func Test<name-of-test-function>(){}`
 5. The test function is going to be automatically called by the go test runner with an argument `t *testing.T`
+
+### Struct
+
+1. It is a data structure in Go that is a collection of different proprties that are related together.
+2. Defining structs
+   ```go
+   type Person struct{
+      firstname string
+      lastname string
+      age uint64
+   }
+   ```
+3. Defining variables out of struct
+
+   1. ```go
+      // First approach
+      person1 := Person{"Ani","Han",25}
+      ```
+      - Here, the values are assigned in the order defined in the struct. Not recommended as the order might be changed in the struct definition and this will lead to mis-assigning of data.
+   2. ```go
+      person2 := Person{firstname:"Ani", lastname:"Han", age:25}
+      ```
+      - Here, we have explicitly defined the properties and their values in the struct.
+   3. ```go
+      var person3 Person
+
+      ```
+
+      - Here, we kind of declared the variable person3 of type Person. We have not initialized it so Go will assign zero values/default values of the types to the properties here.
+      - | Type   | Zero value |
+        | ------ | ---------- |
+        | string | ""         |
+        | int    | 0          |
+        | float  | 0          |
+        | bool   | false      |
+
+### Structs with Reciever functions
+
+1. The functions with takes struct objects as the reciever.
+2. The function with struct reciever gets access to the struct object and can use its properties directly.
+
+### Important things about functions with a reciever
+
+1. We have the folowing 2 scenarios:
+
+   ```go
+   type User struct{
+      name string
+      age uint
+      email string
+   }
+
+   func PrintUser1(u User){
+      fmt.Printf("The user with name %v and email %v, is %v years old",u.name, u.email, u.age)
+   }
+
+   func (u User) PrintUser2(){
+      fmt.Printf("The user with name %v and email %v, is %v years old",u.name, u.email, u.age)
+   }
+
+   user := User{
+      name: "user1"
+      age: 25,
+      email:"user1@user.com",
+   }
+
+   PrintUser1(user)
+   user.PrintUser2()
+   ```
+
+   - Here, PrintUser1 has no reciever and PrintUser2 has a reciever of type User.
+   - PrintUser1 takes an argument of type User and then performs action on it. While PrintUser2 can directly work on its reciever of type User.
+   - We can consider PrintUser2 as a method of struct. Altough Golang does not have the concept of classes but we have something similar in this case.
+   - The struct User has some properties like name, age and email like we have properties in classes. Here, the struct User also has a method associated with it, PrintUser2. Any object of type User can call this method, PrintUser2. All the objects of type User will have access to the associated methods, right from the time of creation, no matter if they user it or not.
+   - Thus, if you want to attach some methods to any struct or any custom datatype, defined with type, then make use of reciever functions. Otherwise, there is on need for it.
+
+-
+
+### Pass By value and Pass by reference
+
+1. In pass by value, the copy of the actual object is sent to the function. Any changes made by the function on the value will not be reflected to the actual object.
+
+   ```go
+   type User struct{
+      name string
+      age uint
+   }
+
+   func updateName(u User){
+      fmt.Println("Old name value",u.name)
+      u.name = "haha"
+      fmt.Println("New name value",u.name)
+   }
+
+   func (u User) updateAge(){
+      fmt.Println("Old age value",u.age)
+      u.age = 90
+      fmt.Println("New age value",u.age)
+   }
+
+   func main(){
+   user := User{
+      name: "user1",
+      age: 25,
+   }
+
+   fmt.Println("Old name before passing",user.name)
+   updateName(user)
+   fmt.Println("New name after passing",user.name)
+
+   fmt.Println("Old age before passing",user.age)
+   user.updateAge()
+   fmt.Println("New age after passing",user.age)
+   }
+
+
+   //Output
+   /*
+      Old name before passing user1
+      Old name value user1
+      New name value haha
+      New name after passing user1
+      Old age before passing 25
+      Old age value 25
+      New age value 90
+      New age after passing 25
+   */
+   ```
+
+2. In pass by reference, the actual object is sent to the function. Any changes made by the function on the value will be made to the actual object. Here, we use `*` to represent a pointer value and we expect an address here. `&` is used to refer to the address of the variable.
+
+   ```go
+   type User struct{
+      name string
+      age uint
+   }
+
+   func updateName(u *User){
+      fmt.Println("Old name value",u.name)
+      u.name = "haha"
+      fmt.Println("New name value",u.name)
+   }
+
+   func (u *User) updateAge(){
+      fmt.Println("Old age value",u.age)
+      u.age = 90
+      fmt.Println("New age value",u.age)
+   }
+
+   func (u *User) updateAge2(){
+      (*u).age = 99
+   }
+
+   func main(){
+   user := User{
+      name: "user1",
+      age: 25,
+   }
+
+
+   fmt.Println("Old name before passing",user.name)
+   updateName(&user)
+   fmt.Println("New name after passing",user.name)
+
+
+   fmt.Println("Old age before passing",user.age)
+   user.updateAge()
+   fmt.Println("New age after passing",user.age)
+
+   }
+
+
+   //Output
+   /*
+      Old name before passing user1
+      Old name value user1
+      New name value haha
+      New name after passing haha
+      Old age before passing 25
+      Old age value 25
+      New age value 90
+      New age after passing 90
+   */
+
+   user2 := User{
+      name: "user2",
+      age: 78,
+   }
+
+   user2Address := &user2
+   user2Address.updateAge2()
+   fmt.Println(user2.age) // 99
+   ```
+
+   - `&<variable>` refers to the address of the `<variable>`
+   - `*<variableAdress>` refers to the value stored at the `<variableAddress>`
+   - Note: although `*<variable>` refers to the value present at the address `<variable>` but if it is present as parameter type or function receiver type, then this represents that a value of type pointer is expected here.
+
+     ```go
+      func (p *Person) Print(){
+         fmt.Println(*p)
+      }
+     ```
+
+     - Here, `*Person` represents a value of type pointer to Person is expected. The address of an object of type Person will be passed here.
+     - `*p` represents the value stored at address of p.
+
+### Value types and Reference types
+
+1. Value types are the objects which by default will be passed as call by value to the function. Any changes made will be made to the copy until passed as pointers explicitly.
+2. Reference types are the objects which bt default will be passes as call by reference to the function. Implicitly, any changes made will be reflected in actual object as well.
+3. Table:
+   - | Value types | Reference types |
+     | ----------- | --------------- |
+     | int         | slices          |
+     | float       | maps            |
+     | string      | channels        |
+     | bool        | pointers        |
+     | structs     | functions       |
