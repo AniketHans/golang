@@ -494,3 +494,12 @@
      | Maps are reference types,any changes made will be reflected to orginal map                   | Structs are value types                                                                                                |
      | It is used to represent a collection of related properties                                   | It is used to represent a "thing" with a lot of properties                                                             |
      | Dont need to know all the keys at the compile time, useful incase of uncertain api resposes. | You need to know all the different fields at the compile time, useful when the api response structure is already known |
+
+### Interfaces
+
+1. Context:
+   1. We know in Go that:
+      1. Every value has a type
+      2. Every function has to specify the type of its arguments
+   2. Does the bove observations mean:
+      1. Every function we ever write has to be rewritten to accomodate different types even if the logic in it is identical?
