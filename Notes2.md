@@ -455,3 +455,42 @@
      | string      | channels        |
      | bool        | pointers        |
      | structs     | functions       |
+
+### Maps
+
+1. Map is a collection of key-value pairs.
+2. In Maps, both the keys and values are statically typed. It means we need to predefine the type of both keys and values.
+3. The default value of an empty map is an empty map, `map[]`
+4. Declaring maps
+   1. ```go
+      func main(){
+         characterMap := map[string]uint{
+            "a":1,
+            "b":2,
+         }
+      }
+      ```
+      - Here, we have declared a character map where all the keys are of type string and all the values will be of type uint.
+   2. ```go
+      func main(){
+         var characterMap map[string]uint;
+         characterMap["a"] = 1;
+      }
+      ```
+   3. ```go
+      func main(){
+         characterMap := make(map[string]uint)
+         characterMap["a"] = 1;
+      }
+      ```
+5. We cant use dot syntax to retrieve values from map like `characterMap.a`, this is **not allowed**
+6. We can delete any key from map using the `delete(mapName,keyName)`.
+   1. Eg: `delete(characterMap,"a")`
+7. Diffrence between struct and map
+   - | Map                                                                                          | Struct                                                                                                                 |
+     | -------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+     | In maps, key are of same type and values are of same type                                    | In structs, the values can be of different types.                                                                      |
+     | All the keys are indexed, means we can iterate over them                                     | Keys/properties don't support indexing.                                                                                |
+     | Maps are reference types,any changes made will be reflected to orginal map                   | Structs are value types                                                                                                |
+     | It is used to represent a collection of related properties                                   | It is used to represent a "thing" with a lot of properties                                                             |
+     | Dont need to know all the keys at the compile time, useful incase of uncertain api resposes. | You need to know all the different fields at the compile time, useful when the api response structure is already known |
