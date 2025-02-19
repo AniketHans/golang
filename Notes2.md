@@ -503,3 +503,210 @@
       2. Every function has to specify the type of its arguments
    2. Does the bove observations mean:
       1. Every function we ever write has to be rewritten to accomodate different types even if the logic in it is identical?
+2. Consider the following code:-
+
+   ```go
+   package main
+   type bot interface{
+   getGreetings() string
+   }
+
+   type englishBot struct{}
+
+   type spanishBot struct{}
+
+   func (eb englishBot) getGreetings() string {
+      // Custom logic for generating an English Greeting.
+      return "Hello"
+   }
+
+   func (sb spanishBot) getGreetings() string {
+      // Custom logic for generating a Spanish Greeting.
+      return "Hola"
+   }
+
+   func printGreeting(b bot){
+      fmt.Println(b.getGreetings())
+   }
+
+   func main() {
+
+      eb := englishBot{}
+      sb := spanishBot{}
+      printGreeting(eb)
+      printGreeting(sb)
+
+      /*
+         Hello
+         Hola
+      */
+
+   }
+   ```
+
+   - Here, we defined an interface named bot, with a function `getGreetings() string` init.
+   - Both the types englishBot and spanishBot has the function `getGreetings() string` associated with them as getGreetings() has both as the recievers.
+   - printGreetings() accept an argument of type bot. Since, englishBot and spanishBot has a function with signature `getGreetings() string`, hence both became the members of bot. Thus, printGreetings() can accept both eb and sb as arguments.
+   - In simple words:-
+     - The program has a type, bot which is an interface
+     - If you are a type in this program with an associated function having the signature `getGreetings() string` then you are an honorary member of type bot.
+     - If you are an honorary member of type `bot`, you can now call this function called `printGreeting(b bot)`
+
+3. You can consider `interfaces` as a way to tell which structs are siblings to each other.
+4. Suppose we have the folowing scenarios:-
+
+   1. ```go
+      package main
+
+      // *********** struct A ************
+      type A struct{}
+
+      func (a A) func_common() string{
+         return "This belongs to A"
+      }
+
+      func (a A) func_A() string{
+         return "This is also belongs to A"
+      }
+      // ***********************************
+
+      // ************ struct B *************
+      type B struct{}
+
+      func (b B) func_common() string{
+         return "This belongs to B"
+      }
+
+      // ************************************
+
+
+      // ************* INTERFACE *************
+
+      type AB interface{
+         func_common() string
+      }
+      // ************************************
+
+      func call(ab AB){
+         fmt.Println("This is called by AB")
+      }
+
+      func main(){
+         a := A{}
+         b := B{}
+         call(a) // This is called by AB
+         call(b) // This is called by AB
+      }
+      ```
+
+      - Here, any struct can be a member of AB interface if and only if it has `func_common() string` function associated with it.
+      - struct A also has an extra func_A() associated with it but the interface AB member requires `func_common() string` in it.
+      - Hence, **a struct object will be called an honorary member of an interface if and only if it contains all the functions, which are mentioned in the interface with same signature as well, associated with it**. If it has any extra functions along with the interface mentioned ones then that's ok.
+
+   2. ```go
+      package main
+
+      // *********** struct A ************
+      type A struct{}
+
+      func (a A) func_common() string{
+         return "This belongs to A"
+      }
+
+      func (a A) func_A() string{
+         return "This is also belongs to A"
+      }
+      // ***********************************
+
+      // ************ struct B *************
+      type B struct{}
+
+      func (b B) func_common() string{
+         return "This belongs to B"
+      }
+
+      // ************************************
+
+
+      // ************* INTERFACE *************
+
+      type AB interface{
+         func_common() string
+         func_A() string
+      }
+      // ************************************
+
+      func call(ab AB){
+         fmt.Println("This is called by AB")
+      }
+
+      func main(){
+         a := A{}
+         b := B{}
+         call(a)
+         call(b) // ERROR
+      }
+      ```
+
+      - Here, the interface wants the members to have 2 mentioned functions `func_common() string` and `func_A() string`.
+      - Object `a` from struct A has both of them associated to it but Object `b` from struct B does not have the `func_A() string` function so it cannot be a member of interface AB in the above case. But still we called `call(b)` which only accepts members of interface AB thus this will throw an error.
+
+   - Hence, if 2 or more structs are members of a interface, it means all of them will have all the functions, which are mentioned in interface, associated with them. Thus, any function which accepts object of type the interface can call any of the mentioned function using any of the member struct objects.
+
+5. Any struct can be a member of more than one interface.
+
+   ```go
+   package main
+
+   import "fmt"
+
+   // *********** struct A ************
+   type A struct{}
+
+   func (a A) func_common() string{
+      return "This belongs to A"
+   }
+
+   func (a A) func_A() string{
+      return "This is also belongs to A"
+   }
+   // ***********************************
+
+   // ************ struct B *************
+   type B struct{}
+
+   func (b B) func_common() string{
+      return "This belongs to B"
+   }
+
+   // ************************************
+
+
+   // ************* INTERFACE *************
+
+   type AB interface{
+      func_common() string
+   }
+   type CD interface{
+      func_common() string
+   }
+   // ************************************
+
+   func call(ab AB){
+      fmt.Println("This is called by AB")
+   }
+   func calling(cd CD){
+      fmt.Println("This is called by CD")
+   }
+
+   func main(){
+   a := A{}
+   b := B{}
+   call(a) // This is called by AB
+   call(b) // This is called by AB
+   calling(a) // This is called by CD
+   calling(b) // This is called by CD
+   }
+   ```
+
+6. We use interfaces to define a method set. We define what something of type interface, say `AB` interface, what kind of functions and return types it should have.
