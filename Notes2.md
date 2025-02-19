@@ -552,7 +552,7 @@
      - If you are a type in this program with an associated function having the signature `getGreetings() string` then you are an honorary member of type bot.
      - If you are an honorary member of type `bot`, you can now call this function called `printGreeting(b bot)`
 
-3. You can consider `interfaces` as a way to tell which structs are siblings to each other.
+3. You can consider `interface` as a parent to some structs that will have all the traits of interface along with their own ones.
 4. Suppose we have the folowing scenarios:-
 
    1. ```go
@@ -710,3 +710,168 @@
    ```
 
 6. We use interfaces to define a method set. We define what something of type interface, say `AB` interface, what kind of functions and return types it should have.
+7. We can also add argument types to the functions under the interface
+   ```go
+   type Bot interface{
+      getGreetings(string, int) (string, error)
+   }
+   ```
+8. Important notes about interfaces:-
+   1. Interfaces are not generic types. Go does not have support of generic types.
+   2. Interfaces are implicit. It means if an interface has some function signatures mentioned in it and any struct has all the mentioned functions with same signatures associated with it then it will automatically become a member of that interface. We dont have to define that manually.
+   3. Interfaces are a contract to help us manage types. It means if the associated functions to a struct has the signatures similar to that of an interface then the struct will become the member of the interface automatically even if you dont want it to become one, may be due to reason that the struct has different pupose to that of the interface.
+9. We can also form interfaces consisting of multiple interfaces.
+
+   ```go
+   type Int1 interface{
+      func1() error
+   }
+   type Int2 interface{
+      func2() error
+   }
+
+   type Int12 interface{
+      Int1
+      Int2
+   }
+
+   ```
+
+   - Here, we have Int1 and Int2 which has some function signatures defined in them respectively.
+   - Int12 is an interface consisting of both Int1 and Int2. It means a struct can be called a member of Interface Int12 only and only if it is also a member of Int1 and Int2.
+   - It means a struct should have all the functions, which are there in Int1 and Int2, associated with it.
+   - Say we have the following code:
+
+     ```go
+      type A struct{}
+      type B struct{}
+
+      func (a A) func1() error{}
+      func (b B) func1() error{}
+      func (a A) func2() error{}
+     ```
+
+     - Here, only struct A has both the func1 and func2 associated with it so it is a member of all Int1, Int2 and ultimately Int12.
+     - Struct B only has func1 associated with it thus it is only a member of Int1.
+
+10. Interfaces can also be used as a type inside a struct etc.
+
+    - Look at the following code:-
+
+    ```go
+      package main
+
+      type A struct{}
+      type B struct{}
+
+      func (a A) func_common() string {
+         return "Called by A"
+      }
+
+      func (b B) func_common() string {
+         return "Called by B"
+      }
+
+      type AB interface {
+         func_common() string
+      }
+
+      type C struct {
+         c  string
+         ab AB
+      }
+    ```
+
+    - Here, we specified an interface AB as a type inside a struct C.
+    - If we specify an interface as a value inside of a struct. We mean to say that the field `ab` can have any value assigned to it as long as it fulfills AB interface. In simple words, any structs which are members of the `AB` interface can be used here.
+    - Since A and B structs both are members of AB interface so any object of A or B type can be used to declare object of struct C.
+
+    ```go
+       func main() {
+          a := A{}
+          c := C{c: "Hi", ab: a}
+          fmt.Println(c) // {Hi {}}
+       }
+    ```
+
+    - A more complicatd example:-
+
+    ```go
+      import "fmt"
+
+      type A struct{}
+      type B struct{}
+
+      func (a A) func_common_1() string {
+         return "Called by A"
+      }
+
+      func (b B) func_common_1() string {
+         return "Called by B"
+      }
+
+
+      func (a A) func_common_2() string {
+         return "Called by A 2"
+      }
+
+
+      type Int1 interface{
+         func_common_1() string
+      }
+
+      type Int2 interface{
+         func_common_2() string
+      }
+
+      /*
+         Here, a struct will be called a member of Int12 only and only if it is a member of both Int1 and Int2.
+         For a struct to be member of Int1, it should have an associated function with reference `func_common_1() string`
+         For a struct to be member of Int2, it should have an associated function with reference `func_common_2() string`
+         Thus it means, for a struct to be member of Int12, it should have both `func_common_1() string` and `func_common_2() string` associated with them.
+         Here, struct B only has `func_common_1() string` associated with it.
+         But, struct A has both so any struct A is the member of Int12 interface.
+         ProStruct need a member of Int12 thus object of struct A can be used here.
+      */
+      type Int12 interface {
+         Int1
+         Int2
+      }
+
+      type ProStruct struct {
+         str  string
+         inter Int12
+      }
+
+      func main() {
+         a := A{}
+         ps := ProStruct{str:"Holaa", inter: a}
+         fmt.Println(ps) // {Holaa {}}
+      }
+    ```
+
+### Type
+
+1. There are 2 types of `type`:-
+1. Concrete type: map, struct, int, string etc
+1. Interface type
+1. We can create a value out of the concrete type and then access it, change it, create new copies of it etc.
+
+```go
+type User struct{
+   name string
+   age uint
+}
+
+user1 := User{name:"user1", age:19}
+```
+
+- Here, we have created a user1 object out of the User type.
+
+3. We can't directly create a value out of the Interface type.
+   ```go
+   type Bot interface{
+      func1() string
+   }
+   ```
+   - Here, we cannot create an object of type Bot.
