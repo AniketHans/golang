@@ -853,20 +853,20 @@
 ### Type
 
 1. There are 2 types of `type`:-
-1. Concrete type: map, struct, int, string etc
-1. Interface type
-1. We can create a value out of the concrete type and then access it, change it, create new copies of it etc.
+   1. Concrete type: map, struct, int, string etc
+   2. Interface type
+2. We can create a value out of the concrete type and then access it, change it, create new copies of it etc.
 
-```go
-type User struct{
-   name string
-   age uint
-}
+   ```go
+   type User struct{
+      name string
+      age uint
+   }
 
-user1 := User{name:"user1", age:19}
-```
+   user1 := User{name:"user1", age:19}
+   ```
 
-- Here, we have created a user1 object out of the User type.
+   - Here, we have created a user1 object out of the User type.
 
 3. We can't directly create a value out of the Interface type.
    ```go
@@ -875,3 +875,24 @@ user1 := User{name:"user1", age:19}
    }
    ```
    - Here, we cannot create an object of type Bot.
+
+### read() of Reader interface
+
+1. We have the following read function signature in the Reader interface.
+
+   ```go
+   type Reader interface{
+      Read(p []byte) (n int, err error)
+   }
+   ```
+
+2. Here, for any struct to implement the Reader interface need to have the Read function associated with it.
+3. The Read function takes `[]byte` as input. This is generally an empty byte slice and the logic inside the `read()` fills the byte slice with the data. The http response struct will be filling the []byte data with the response in its read() implementaion. Similarly, each struct has some data to fill in []byte in its implementation of the read(). But the argument []byte is just to fill the processed data in it so it can be utilized further.
+   ![read() under the hood](./resources/images/ReadfunctionImplementation.png)
+4. The byte slice can then be utilized for working on the data it is stored with.
+5. The read() function also return the number of bytes read and any error if occured.
+6. Thus, the read function kind of gives us 3 values that can be utilized:
+   1. Processed data in `p []byte`
+   2. Number of bytes strored in the slice in `n int`
+   3. Error in `err error`
+7. We pass kind of empty canvas, in the form of []byte, and expects the read function to fill data in it.
