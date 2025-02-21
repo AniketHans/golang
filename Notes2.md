@@ -876,7 +876,7 @@
    ```
    - Here, we cannot create an object of type Bot.
 
-### read() of Reader interface
+### Read() of Reader interface
 
 1. We have the following read function signature in the Reader interface.
 
@@ -887,12 +887,25 @@
    ```
 
 2. Here, for any struct to implement the Reader interface need to have the Read function associated with it.
-3. The Read function takes `[]byte` as input. This is generally an empty byte slice and the logic inside the `read()` fills the byte slice with the data. The http response struct will be filling the []byte data with the response in its read() implementaion. Similarly, each struct has some data to fill in []byte in its implementation of the read(). But the argument []byte is just to fill the processed data in it so it can be utilized further.
-   ![read() under the hood](./resources/images/ReadfunctionImplementation.png)
+3. The Read function takes `[]byte` as input. This is generally an empty byte slice and the logic inside the `Read()` fills the byte slice with the data. The http response struct will be filling the []byte data with the response in its Read() implementaion. Similarly, each struct has some data to fill in []byte in its implementation of the Read(). But the argument []byte is just to fill the processed data in it so it can be utilized further.
+   ![Read() under the hood](./resources/images/ReadfunctionImplementation.png)
 4. The byte slice can then be utilized for working on the data it is stored with.
-5. The read() function also return the number of bytes read and any error if occured.
+5. The Read() function also return the number of bytes read and any error if occured.
 6. Thus, the read function kind of gives us 3 values that can be utilized:
    1. Processed data in `p []byte`
    2. Number of bytes strored in the slice in `n int`
    3. Error in `err error`
 7. We pass kind of empty canvas, in the form of []byte, and expects the read function to fill data in it.
+8. Note: Read() is not designed to resize the slice if the slice is already full. So the Read() is gonna read data into the byte slice until the slice is full. Thus, if a slice with zero elemnets , `bs := []byte{}` is passed to the Read() then the function will consider the slice to be already full, thus it will not read data into it. Thus, we need to initialize the slice with a large number of spaces, `bs := make([]byte,99999)`
+
+### Writer interface
+
+1. It does opposite to the reader interface.
+2. It takes the input from our program in the form of []byte and then out it to some other source, like http resposne, standard output (terminal) etc.
+3. Interface:
+   ```go
+   type Writer interface{
+      Write(p []byte)(n int, err error)
+   }
+   ```
+   - Here, the []byte is working as an input to the Write function that will converted to another type and sent to another source for its consumption.
