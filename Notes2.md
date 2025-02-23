@@ -910,3 +910,62 @@
    }
    ```
    - Here, the []byte is working as an input to the Write function that will converted to another type and sent to another source for its consumption.
+
+### Go routines
+
+1. When we launch (compile + execute) a Go program, we automatically create one Go routine. We can call this a main go routine.
+2. To launch a Go routine, we use `go` keyword. The `go` keyword means run the function in a new go routine.
+   Syntax: `go <function-call>`
+3. The go routines run on separate cores of your CPU. Thus, Golang is considered to have a true concorrent nature as multiple processes can be concurrently.
+4. Working of Go routines:
+   1. With single core cpu
+      1. The go scheduler works with one CPU on our local machine. **Even if you are running multi core machine, go routine by default is going to use only one core of the CPU.**
+         ![Single Core CPU Go Routine](./resources/images/GoRoutineSingleCore.png)
+      2. Even though we are running multiple go routines, only one is being executed or running at a single time as there is only one core in the CPU.
+      3. The purpose of the Go scheduler is to monitor the code inside each of the Go routines. As soon as the scheduler detects that one routine (current executing go routine) has finished running all the code inside of it or when it detects that the function has made a blocking call like the http request or IO request, scheduler pauses the execution of the current go routine (in case of blocking code otherwise if go routine is finished it will be removed) and start executing the other go routine.
+      4. Thus, due to single core CPU execution, even tough when we have spawned multiple go routines, they will not actually be executed truly at the same time.
+   2. With multiple CPU cores
+      1. By default, Go attempts to use only one CPU core. We need to overwrite the setting to let Go scheduler use multiple CPU cores.
+      2. When we have multiple CPU cores, each one can run one single go routine at a time. Thus, Go sheduler will try to run multiple go routines at the same time on multiple CPU cores. The number of go routines that can run paralelly depends on the number of CPU core assigned to the Go scheduler for its use.
+         ![Multi core CPU Go routine](./resources/images/GoRoutineMultipleCores.png)
+5. Concurrency is not parallelism
+   1. Concurrency is we can have mutiple threads executing code. If one thread is blocked another one is picked up and worked on. Concurrent code make use of context switching. In Go, concurrent code can be run parallerly if multiple cpu cores can be utilized.
+   2. Parallelism is multiple threads executed at the same time. It requires mutiple CPUs.
+6. Whenever we run a program, we always get one main go routine created for us. As we start to launch go routines inside of our code, we refer to them as child go routines. The child go routines are not given the same level of respect as the main go routine.
+   ![Main and Child Go routines](./resources/images/MainAndChildRoutines.png)
+7. The main routine is the single go routine inside of our program that controls when our program exits or quits. When the main routines creates all the child go routines while executing and then there is nothing for it to execute, then the main function ends even though the child routines might still be executing. As soon as the main program exits, the entire program execution including the one of child routines terminates.
+   ![Main routine exits fast](./resources/images/MainRoutineExitsFast.png)
+8. To prevent this behavior, we can use `channels`.
+
+### Channels
+
+1. Channels are used to communicate in between different go routines.
+2. We need to make sure the main go routine is aware of when each of the child go routines have completed their code.
+3. Channels intermediates discussion or communication between all the running routines.
+   ![Channels a comminication medium](./resources/images/ChannelsIntermediatingComm.png)
+4. We can treat a channel as any other value inside of Go like we create a struct, int etc. They are actual values that can pass around between different go routines.
+5. Channels are also typed, means we need to predefine the type of value that the channel will be holding.
+6. Syntax for creating channel:- `channel := make(chan string)`, here we declared a channel of type string.
+7. For function to accpt channel as argument, `func func1(param1 string, channel chan string)`, we need to specify the type of channel also in function declaration.
+8. Sending data with channels
+   1. The channel is like a two way messaging device. One will be sending the data and other will be accepting that data.
+   2. Sending data into the channel, `<channel> <- value`, e.g `ch <- 5` here we are sending the value 5 into the channel.
+   3. Someone has to recieve the sent value, `variable <- channel`, eg `myNumber <- ch` here we are recieving and storing the value sent into the channel. We will wait until a value comes to the channel.
+9. Blocking channel
+
+   1. Whenever we have to recieve something from a channel in a routine, the execution of the routine kind of blocks until the message is recieved from the channel.
+   2. If we have multiple sources of message from different child go routines, and the main go routine is only waiting for one message from the channel, as soon as any of the go routine pushes message in to the channel and the main goroutine consumes it, the execution of the go main routine completes thus leading to killing of other child go routines. Thus, main go routine should wait for all the messages that are being pushed into the channel so the execution of child go routines is completed.
+   3. **Recieving a message from a go routine is a blocking line of code**. It means the program will wait for a message to get recieved from the channel to resume its further execution.
+   4. If you have 4 child go routines and each of them is sending message to the main go routine and the main go routines is waiting for message from each of the child go routines. Now, suppose we put an extra message reciever in the main go routine, then after getting the 4 messages from child go routines, the main function execution will block due to the extra reciever as it will keep on waiting for the message.
+
+   ```go
+      // Suppose there are 4 go routines sending a string message to the main go routine
+      func main(){
+         fmt.Println(<-ch) //1
+         fmt.Println(<-ch) //2
+         fmt.Println(<-ch) //3
+         fmt.Println(<-ch) //4
+
+         fmt.Println(<-ch) // Extra reciever, this is blocking and the code will keep on waiting for the message. But we dont have a 5th sender.
+      }
+   ```
