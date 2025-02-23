@@ -110,7 +110,7 @@
    n2.func2()
    ```
 
-10. Functions with a reciever tells that an object of type of the reciever can use the function usinf dot(.) notation.
+10. Functions with a receiver tells that an object of type of the receiver can use the function usinf dot(.) notation.
 
     ```go
     type newString string
@@ -272,12 +272,12 @@
         | float  | 0          |
         | bool   | false      |
 
-### Structs with Reciever functions
+### Structs with receiver functions
 
-1. The functions with takes struct objects as the reciever.
-2. The function with struct reciever gets access to the struct object and can use its properties directly.
+1. The functions with takes struct objects as the receiver.
+2. The function with struct receiver gets access to the struct object and can use its properties directly.
 
-### Important things about functions with a reciever
+### Important things about functions with a receiver
 
 1. We have the folowing 2 scenarios:
 
@@ -306,11 +306,11 @@
    user.PrintUser2()
    ```
 
-   - Here, PrintUser1 has no reciever and PrintUser2 has a reciever of type User.
-   - PrintUser1 takes an argument of type User and then performs action on it. While PrintUser2 can directly work on its reciever of type User.
+   - Here, PrintUser1 has no receiver and PrintUser2 has a receiver of type User.
+   - PrintUser1 takes an argument of type User and then performs action on it. While PrintUser2 can directly work on its receiver of type User.
    - We can consider PrintUser2 as a method of struct. Altough Golang does not have the concept of classes but we have something similar in this case.
    - The struct User has some properties like name, age and email like we have properties in classes. Here, the struct User also has a method associated with it, PrintUser2. Any object of type User can call this method, PrintUser2. All the objects of type User will have access to the associated methods, right from the time of creation, no matter if they user it or not.
-   - Thus, if you want to attach some methods to any struct or any custom datatype, defined with type, then make use of reciever functions. Otherwise, there is on need for it.
+   - Thus, if you want to attach some methods to any struct or any custom datatype, defined with type, then make use of receiver functions. Otherwise, there is on need for it.
 
 -
 
@@ -545,7 +545,7 @@
    ```
 
    - Here, we defined an interface named bot, with a function `getGreetings() string` init.
-   - Both the types englishBot and spanishBot has the function `getGreetings() string` associated with them as getGreetings() has both as the recievers.
+   - Both the types englishBot and spanishBot has the function `getGreetings() string` associated with them as getGreetings() has both as the receivers.
    - printGreetings() accept an argument of type bot. Since, englishBot and spanishBot has a function with signature `getGreetings() string`, hence both became the members of bot. Thus, printGreetings() can accept both eb and sb as arguments.
    - In simple words:-
      - The program has a type, bot which is an interface
@@ -953,22 +953,14 @@
    3. Someone has to recieve the sent value, `variable <- channel`, eg `myNumber <- ch` here we are recieving and storing the value sent into the channel. We will wait until a value comes to the channel.
 9. Blocking channel
 
-   1. Whenever we have to recieve something from a channel in a routine, the execution of the routine kind of blocks until the message is recieved from the channel.
+   1. Whenever we have to recieve something from a channel in a routine, the execution of the receiver routine kind of blocks until the message is recieved from the channel.
    2. If we have multiple sources of message from different child go routines, and the main go routine is only waiting for one message from the channel, as soon as any of the go routine pushes message in to the channel and the main goroutine consumes it, the execution of the go main routine completes thus leading to killing of other child go routines. Thus, main go routine should wait for all the messages that are being pushed into the channel so the execution of child go routines is completed.
    3. **Recieving a message from a go routine is a blocking line of code**. It means the program will wait for a message to get recieved from the channel to resume its further execution.
-   4. If you have 4 child go routines and each of them is sending message to the main go routine and the main go routines is waiting for message from each of the child go routines. Now, suppose we put an extra message reciever in the main go routine, then after getting the 4 messages from child go routines, the main function execution will block due to the extra reciever as it will keep on waiting for the message.
-
-   ```go
-      // Suppose there are 4 go routines sending a string message to the main go routine
-      func main(){
-         fmt.Println(<-ch) //1
-         fmt.Println(<-ch) //2
-         fmt.Println(<-ch) //3
-         fmt.Println(<-ch) //4
-
-         fmt.Println(<-ch) // Extra reciever, this is blocking and the code will keep on waiting for the message. But we dont have a 5th sender.
-      }
-   ```
+   4. The number of receivers should always be equal to the number of senders.
+   5. There are 3 scenarios:
+      1. No. of receivers == No. of senders :- Program will work fine.
+      2. No. of receivers > No. of senders :- Program will throw error.
+      3. No. of receivers < No. of senders :- This may lead to early completion of main() as it may not wait for recieving message from all the senders.
 
 10. Using range with channels
     ```go
