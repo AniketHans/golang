@@ -105,6 +105,29 @@
 ### Loops
 
 1. There is only for loop in golang, which can be used as while loop as well
+2. We have 2 syntax of for loop:
+
+   1. Looping over iterables
+
+      ```go
+      for index, value := range list{
+         //code
+      }
+      ```
+
+   2. Looping over an integer range
+      ```go
+      for i:=0; i<100; i++{
+         //code
+      }
+      ```
+
+3. For for loop to be used as while loop, we can use the syntax:
+   ```go
+   for {
+      //loop code
+   }
+   ```
 
 ### Functions
 

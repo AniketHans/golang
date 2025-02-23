@@ -969,3 +969,27 @@
          fmt.Println(<-ch) // Extra reciever, this is blocking and the code will keep on waiting for the message. But we dont have a 5th sender.
       }
    ```
+
+10. Using range with channels
+    ```go
+    //Suppose we have a string channel
+    channel := make(chan string)
+    for val := range channel{
+      fmt.Println(val)
+    }
+    ```
+    - Here, we wait for the channel to return some value using the range. After the channel has returned some value assign it to the variable val.
+
+### Function Literal
+
+1. This is the anomynous function that is immediately executed.
+   ```go
+   channel := make(chan string)
+   go func(val string, channel chan string){
+      //code to be executed
+      // futher go routine calls
+   }("Hello", channel)
+   ```
+2. Always pass the parameters that will be further used inside the function literal. Avoid using the global variables inside the go function literal.
+3. We never try to access the same variable in multiple go routines as the value of the variable change in one routine may affect the other routines. Thus, use pass by value and send a separate copy of the variable to the go routines as the changes by one routine will not affect the other.
+4. Thus, either pass variable copies to the go routines or use channels for communication. Never use global variables for communication between diffrent go routines.
