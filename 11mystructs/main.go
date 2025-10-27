@@ -19,5 +19,10 @@ func main() {
 	fmt.Printf("The details are: %+v\n",aniket)
 	fmt.Printf("Name is %v\n",aniket.Name)
 
-
+	// using var
+	var aniket2 User
+	aniket2.Name="Aniket"
+	aniket2.Email = "aniket@mail.com"
+	fmt.Printf("The details are: %+v\n",aniket2)
+	fmt.Printf("Name is %v\n",aniket2.Name)
 }
