@@ -77,4 +77,15 @@
 
 ## Interfaces
 
-1.
+1. Suppose you have the main application which needs to connect to some database.
+2. We need to create database package that will have some functions needed by the main application to perform the database tasks.
+3. Suppose you have user info in main application and your want to perform CRUD operations in database using the user info. For this, you will need the following functions:
+   1. createUser(userInfo)
+   2. readUser(userId)
+   3. updateUser(userId, userInfo)
+   4. deleteUser(userId)
+4. For any database package to be used by our main application, we need to implement the above functions in it.
+5. Also, we might change the database in future if needed. For example, we might start using NoSQL database.
+6. If we pass the database object of a specific type in the main application and in future we have to change to the database, then we have to make changes to the main application code as well. As we can see here: [App using database without intefaces](./38InterfacesAdvanced/app-without-interface/main.go)
+7. We can avoid the above behaviour by using Interfaces.
+8. In our application, instead of creating new application by passing an db object, we can pass an interface to it. Any db package which implements the interface is eligible for crreating out application object. As we have implemented here: [App using database with interface](./38InterfacesAdvanced/app-with-interface/main.go)
