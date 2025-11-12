@@ -27,16 +27,18 @@ func (t Trucks) FourWheelDrive() {
 }
 
 func main(){
-	c := Cars{Engine{},Transmission{},Steering{},"Ferrari"}
-	t := Trucks{Engine{}, Transmission{}, Steering{}, "Tata"}
+	c := Cars{Engine{EngineType: "turbo"},Transmission{},Steering{},"Ferrari"}
+	t := Trucks{Engine{EngineType: "NA"}, Transmission{}, Steering{}, "Tata"}
 
 	c.Start()
 	c.Stall()
 	c.ConvertTop()
+	fmt.Println("Engine Type is:",c.EngineType)
 
 	t.TurnLeft()
 	t.Start()
 	t.FourWheelDrive()
+	fmt.Println("Engine Type is:",t.EngineType)
 
 	StartEngines(c,t)
 }
