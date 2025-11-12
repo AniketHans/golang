@@ -89,3 +89,23 @@
 6. If we pass the database object of a specific type in the main application and in future we have to change to the database, then we have to make changes to the main application code as well. As we can see here: [App using database without intefaces](./38InterfacesAdvanced/app-without-interface/main.go)
 7. We can avoid the above behaviour by using Interfaces.
 8. In our application, instead of creating new application by passing an db object, we can pass an interface to it. Any db package which implements the interface is eligible for crreating out application object. As we have implemented here: [App using database with interface](./38InterfacesAdvanced/app-with-interface/main.go)
+
+## Abstraction
+
+1. Abstraction is the process of exposing only the relevant attributes and behaviors of an object or function, while hiding its implementation details.
+2. Abstraction is implemented by using interfaces in go
+3. Suppose you are working on an application which uses a package, say `vending-machine` package, which some other team is working on parallely. Ideally you have to wait for other team to complete the code of the package first and then you will be able to integrate the package in your application. This is might hinder the parallel working of both the teams.
+4. In golang, you can use abstraction using interfaces in your application to enable the parallel development by both the teams
+5. First, both the teams will decide the functions and their signatures that the main application team will need and the other team will be going to implement in the `vending-machine` package.
+6. After this, the main application team can create an interface containing the decided functions and their signatures and write code for the application.
+7. When the vending-machine package team is done with the code on their side, then the main applcation team only has to import the package and pass it to the application like we are doing here: [Abstraction](./39Abstraction/main.go)
+8. Here, just by using abstraction and not knowing how the implementation of the decided functions is done, we have used the functions in our main application.
+9. We have decoupled our main application and vending-machine package
+
+## Compositions
+
+1. Suppose you have 2 structs, say Car and Truck. Both of them can have some different functionalities like Truck is 4WD and car can be a covertable one. They can have same functionalities as well like both of them will have engine which can start or stall, similarly both of them can have gears which can be either shifted up and shifted down
+2. Composition help us to share common functionalities between types. This will help us in preventing the code duplicacy
+3. From our above example, we can see that the functionalities like `Start()`, `ShiftUp()`, `TurnLeft()` are common amoung the Truck and Car whereas the functionalities like `FourWheelDrive()` and `ConvertTop()` are specific to Truck and Car respectively
+4. Thus, if we dont use compositions, then we have to reimplement the common functionlities for all the vehicle types which will increase the code duplicacy and also we have same change in multiple places. Like we are doing here: [Code without Composition](./40Composition/without-composition/main.go)
+5. Here, [Code with Composition](./40Composition/with-composition/main.go), we have created specific structs for common functionalities and added them to the Car and Truck as composition so they also get those functionalities embedded in them
