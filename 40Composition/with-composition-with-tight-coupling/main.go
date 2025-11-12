@@ -54,3 +54,7 @@ func StartEngines(vehicles ...Startables){
 }
 
 // Since the package main is distributed amoung multiple files use `go run .` to run the code
+
+// In this code, Cars and Trucks structs are tightly coupled to specific Engine, Transmission and Steering structs
+// If there is say another Transmission say AdvancedTransmission having the same functions as the Transmission, we cannot use it without
+// making change to the Cars and Trucks structs
