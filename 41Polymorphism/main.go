@@ -12,7 +12,8 @@ func CartTotal(products ...BillableProduct) int64 {
 	// we can loop over them and call the CalculatePrice(). 
 	totPrice := int64(0)
 	for _, product := range products {
-		//This is polymorphism as the implementation of the 
+		//This is polymorphism as the implementation of the CalculatePrice() by each product can be different but since they have
+		// a common function signature, they implements the 
 		totPrice += product.CalculatePrice()
 	}
 	return totPrice

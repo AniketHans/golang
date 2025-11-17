@@ -109,3 +109,111 @@
 3. From our above example, we can see that the functionalities like `Start()`, `ShiftUp()`, `TurnLeft()` are common amoung the Truck and Car whereas the functionalities like `FourWheelDrive()` and `ConvertTop()` are specific to Truck and Car respectively
 4. Thus, if we dont use compositions, then we have to reimplement the common functionlities for all the vehicle types which will increase the code duplicacy and also we have same change in multiple places. Like we are doing here: [Code without Composition](./40Composition/without-composition/main.go)
 5. Here, [Code with Composition](./40Composition/with-composition/main.go), we have created specific structs for common functionalities and added them to the Car and Truck as composition so they also get those functionalities embedded in them
+
+## Go Concurrency Patterns
+
+### Primitives for go concurrency patterns
+
+1. Three primitives used to build Go concurrency patterns:
+   1. Go routines
+   2. Channels
+   3. Select
+2. Go routines:
+   1. main() function acts as the parent to all the functions we call in our go program
+   2. We can fork some functions off from the main thread to execute then parallely using the `go func <name>{}` syntax. These forked off functions are called as Go routines.
+   3. If the main function gets executed and returned before other go routines, it forked, the go routines will also exit whether their work is done or not.
+   4. Once we fork off some go routines from main() to perform some tasks, we need to join the go routines back to the main() to get the work done by them. Go routines will not join back the main(), automatically, after their work completion. We need some way to connect them back to the main()  
+      ![Go routine fork](./resources/images/go-routine-fork.png)
+3. Channels:
+
+   1. Channels are used to communicate information between go routines
+   2. Go routines run independent of each other without requiring knowledge of other routines by default
+   3. in order for our go routines to communicate with each other, we create some space in memory and the go routines will reference that same memory space. This memory space is called channel
+   4. Suppose we have a 2 go routines running, r1 and r2. Suppose r1 wants to send some data to r2. We can create a channel, c1. r2 will listen from the channel and r1 will send data to the channel
+   5. Channels can be considered as queue that can hold and release data in FIFO manner
+   6. r1 can push any amount of data to channel and r2 will read the data from the channel in FIFO manner.
+   7. Note: main() is also a go routine
+   8. The channels can be unbuffered and buffered:
+
+      1. unbuffered channels:
+
+         1. Declaration syntax: `ch := make(chan <type>)`
+         2. unbuffered channels are blocking in nature. If you are reading data from an unbuffered channel, whether it is the main thread or any other go routine, the go routine's execution will be holded at the line of code where it is reading from the channel. It will only be unblocked once it recieves some value from the channel Thus while using unbuffered channels and reading data from the channel, make sure you have a someone sending the data to it. You cannot send or recieve data in the same function from the same unbuffered channel. This is because as soon as you send data to the channel, you have to consume it. But if you are doing both sending and reading data from channel in the same function, you wont be able to achieve the above condition due to sync execution of code within the same function.
+         3. If you dont have a sender of data to the channel but have a reciever of the data from the channel, in case of unbuffered channels, it will result in error due to the blocking nature of the reciever or reader code.
+         4. But, it you have a sender but no reciever, in that case the program will not throw any error and the sent data to the channel will be lost as there is no reciever
+         5. In blocking code:
+
+            1. ```go
+
+                  func main(){
+                     ch := make(chan string) // unbuffered channel
+
+                     go func(){
+                        ch <- "data"
+                     }()
+
+                     msg := <-ch // blocking code
+                  }
+
+               ```
+
+            2. The code line `msg := <-ch` is blocking as the main() will wait for some data from channel.
+            3. There are 2 scenarios where the code will be unblocked:
+               1. **`msg` gets some data from the channel, or**
+               2. **The channel, `ch`, is closed by some go routine**. If the channel is closed, the reciever will get a close msg which can "" in case of string chan, or 0 in case of int channel etc
+
+      2. Buffered Channels
+
+         1. Buffered channels are channels which have a fixed mentioned capacity.
+         2. Syntax:
+            1. `buffCh := make(chan string, 3)`, this will create buffCh with capacity 3
+         3. Buffered channels are non blocking in nature unlike unbuffered channels. It means you dont need a receiver of the value first, here, before putting values to the channel
+         4. Buffered channel can hold specified number of values if needed without blocking the go routine
+         5. If you put more values than the assigned one in buffered channel then in will block the go routine.
+
+            1. If you put fill more values in buffered channel than the capacity in a go routine without consuming then you the go routine will get blocked but the main thread/routine will not block. So you wont get any errors
+
+               ```go
+
+
+               ```
+
+            2. sd
+
+4. Select statement
+
+   1. It lets a go routine wait on multiple comuunication operations means it can let a go routine wait on messages from multiple channels
+   2. For example:
+
+      ```go
+         func main() {
+
+         ch1 := make(chan string)
+         ch2 := make(chan int64)
+
+         go func() {
+            ch1 <- "data"
+         }()
+
+         go func() {
+            ch2 <- 10
+         }()
+
+         select {
+         case msg1 := <-ch1:
+            fmt.Println("Message received from channel ch1", msg1)
+         case msg2 := <-ch2:
+            fmt.Println("Message received from channel ch2", msg2)
+         }
+
+      }
+
+      ```
+
+   3. A select statement is going to block until one of the above case can run. It means in above case, select is going to block until it receives msgs from any one of the channels.
+   4. If the select receives values from multiple channels at the same time, then it will choose one case at random and execute the code in its block
+
+### Go concurrency patterns
+
+1. for-select loop
+   1.
