@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"time"
 )
 
 // // ----------------------------------------------- Scenario 1 ------------------------------------------------------
@@ -85,46 +84,75 @@ import (
 
 // }
 
-// ----------------------------------------------- Scenario 3 ------------------------------------------------------
+// // ----------------------------------------------- Scenario 3 ------------------------------------------------------
+
+// func main() {
+// 	buffCh := make(chan string, 3)
+// 	go func(){
+// 		buffCh <- "a"
+// 		fmt.Println("a appened in buffChan")
+// 		buffCh <- "b"
+// 		fmt.Println("b appened in buffChan")
+// 		buffCh <- "c"
+// 		fmt.Println("c appened in buffChan")
+// 		buffCh <- "d" // the go routine will get blocked as the buffChan is full
+// 		fmt.Println("d appened in buffChan")
+// 	}()
+
+// 	fmt.Println("One value from buffCh",<- buffCh) // Consuming one value from channel in FIFO order
+
+// 	time.Sleep(time.Second*2)
+
+// 	/*
+// 	In above go routine, we are putting one more value than the defined into the buffered channel and but we are consuming one data from
+// 	the channel in another go routine. Thus the buffered channel will have the extra space in it so this time it will accomodate the extra
+// 	value in it.
+// 	Thus there will be no error this time
+
+// 		MAIN thread                                               Another thread
+// 		-----------                                               ------------
+// 		buffCh := make(chan string, 3)
+// 		go routine triggered  ----------------------------------> go routine performing tasks in separate thread																							 |
+// 		<- buffCh <-------------------------- value from buffCh from thread -----------------|
+// 		Sleep(2 seconds)
+// 	*/
+
+// 	//Output (in no particular order)
+
+// 	/*
+// 		a appened in buffChan
+// 		b appened in buffChan
+// 		c appened in buffChan
+// 		d appened in buffChan
+// 		One value from buffCh a
+// 	*/
+
+// }
+
+// ----------------------------------------------- Scenario 4 ------------------------------------------------------
 
 func main() {
 	buffCh := make(chan string, 3)
-	go func(){
-		buffCh <- "a"
-		fmt.Println("a appened in buffChan")
-		buffCh <- "b"
-		fmt.Println("b appened in buffChan")
-		buffCh <- "c"
-		fmt.Println("c appened in buffChan")
-		buffCh <- "d" // the go routine will get blocked as the buffChan is full
-		fmt.Println("d appened in buffChan")
-	}()
+	buffCh <- "a"
+	fmt.Println("a appened in buffChan")
+	buffCh <- "b"
+	fmt.Println("b appened in buffChan")
+	buffCh <- "c"
+	fmt.Println("c appened in buffChan")
 	
 	fmt.Println("One value from buffCh",<- buffCh) // Consuming one value from channel in FIFO order
 
-	time.Sleep(time.Second*2)
-
 	/*
-	In above go routine, we are putting one more value than the defined into the buffered channel and but we are consuming one data from 
-	the channel in another go routine. Thus the buffered channel will have the extra space in it so this time it will accomodate the extra 
-	value in it.
-	Thus there will be no error this time
-	
-		MAIN thread                                               Another thread
-		-----------                                               ------------
-		buffCh := make(chan string, 3)
-		go routine triggered  ----------------------------------> go routine performing tasks in separate thread																							 |
-		<- buffCh <-------------------------- value from buffCh from thread -----------------|
-		Sleep(2 seconds)
+	In above case, since are using Buffered channel and we are only putting data in the buffered channel according to its capacity.
+	We can send and recieve data from the channel in the same function or go routine which is not possible with Unbuffered channel
 	*/
 
-	//Output (in no particular order)
+	//Output
 
 	/*
 		a appened in buffChan
 		b appened in buffChan
 		c appened in buffChan
-		d appened in buffChan
 		One value from buffCh a
 	*/
 

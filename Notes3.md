@@ -141,7 +141,8 @@
          2. unbuffered channels are blocking in nature. If you are reading data from an unbuffered channel, whether it is the main thread or any other go routine, the go routine's execution will be holded at the line of code where it is reading from the channel. It will only be unblocked once it recieves some value from the channel Thus while using unbuffered channels and reading data from the channel, make sure you have a someone sending the data to it. You cannot send or recieve data in the same function from the same unbuffered channel. This is because as soon as you send data to the channel, you have to consume it. But if you are doing both sending and reading data from channel in the same function, you wont be able to achieve the above condition due to sync execution of code within the same function.
          3. If you dont have a sender of data to the channel but have a reciever of the data from the channel, in case of unbuffered channels, it will result in error due to the blocking nature of the reciever or reader code.
          4. But, it you have a sender but no reciever, in that case the program will not throw any error and the sent data to the channel will be lost as there is no reciever
-         5. In blocking code:
+         5. Unbuffered channels are used to do synchronous communication between go routines because for every sender we need a corresponding receiver
+         6. In blocking code:
 
             1. ```go
 
@@ -169,16 +170,8 @@
             1. `buffCh := make(chan string, 3)`, this will create buffCh with capacity 3
          3. Buffered channels are non blocking in nature unlike unbuffered channels. It means you dont need a receiver of the value first, here, before putting values to the channel
          4. Buffered channel can hold specified number of values if needed without blocking the go routine
-         5. If you put more values than the assigned one in buffered channel then in will block the go routine.
-
-            1. If you put fill more values in buffered channel than the capacity in a go routine without consuming then you the go routine will get blocked but the main thread/routine will not block. So you wont get any errors
-
-               ```go
-
-
-               ```
-
-            2. sd
+         5. If you put more values than the assigned one in buffered channel then in will block the go routine. Refer to [file](./42GoConcurrency/channels/buffered-channel/main.go) for some scenarios
+         6. Buffered channels make the communication between go routines asynchronous
 
 4. Select statement
 
@@ -216,4 +209,11 @@
 ### Go concurrency patterns
 
 1. for-select loop
-   1.
+   1. Go routine leak:
+      1. Sometimes we triggers some go routines that runs for life time till the main() is returned or the service is restarted
+      2. This is intentional and unintentional
+      3. If there is an unintentionaly and infinitely running go routine, we call it Go routine leak
+   2. To prevent the go routine leak, we make use of done channel concept.
+      1. In this, we create a channel, named done, in the parent go routine and pass it to the child go routine. This child go routine may run infinitely
+      2. The child go routine will use the select cases to do its work. But we will put first case in select which will be listening to the done channel expecting some data
+      3. In parent go routine, we can close the done channel anytime which will be propogated to the select case in the child go routine that can cause the child go routine to return preventing it from running infinitely
