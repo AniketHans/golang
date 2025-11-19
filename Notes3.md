@@ -217,3 +217,11 @@
       1. In this, we create a channel, named done, in the parent go routine and pass it to the child go routine. This child go routine may run infinitely
       2. The child go routine will use the select cases to do its work. But we will put first case in select which will be listening to the done channel expecting some data
       3. In parent go routine, we can close the done channel anytime which will be propogated to the select case in the child go routine that can cause the child go routine to return preventing it from running infinitely
+      4. Reference: [for-select](./43GoConcurrencyPatterns/for-select/main.go)
+2. Pipeline
+   1. We can have some data in raw form and we need to convert it to some form by performing multiple operations on it.
+   2. For each operation we can have a stage dedicated. Each stage expects data in some format and transforms it by performing operations on it and tranfer it to the next stage.
+   3. This setup is called pipeline.
+      1. `SOURCE ----raw data----> STAGE 1 -----transformed data----> STAGE 2 -----more transformed data----> DESTINATION `
+   4. Using go routines, we can parallelize the working of stages in pipeline for faster execution.
+   5. Reference [code](./43GoConcurrencyPatterns/pipelines/main.go)

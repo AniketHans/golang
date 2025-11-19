@@ -63,7 +63,7 @@ func main() {
 		// the function cannot write anything to the channel but only read data from it
 		for {
 			select{
-			case <-ch: // If some msg, in this case channel close msg, is received from the channel, this case will run and break the infinite loop. In this case, go routine will also stop
+			case <-ch: // 2. If some msg, in this case channel close msg, is received from the channel, this case will run and break the infinite loop. In this case, go routine will also stop
 				return // If anything is received from the ch channel, the function/go routine will return
 			default:
 				fmt.Println("DOING WORK....")
