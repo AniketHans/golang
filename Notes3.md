@@ -1,5 +1,7 @@
 # Advanced Golang Concepts
 
+- Resources [youtube](https://www.youtube.com/@kantancoding)
+
 ## Closures
 
 1. Suppose we have the following code
@@ -225,3 +227,11 @@
       1. `SOURCE ----raw data----> STAGE 1 -----transformed data----> STAGE 2 -----more transformed data----> DESTINATION `
    4. Using go routines, we can parallelize the working of stages in pipeline for faster execution.
    5. Reference [code](./43GoConcurrencyPatterns/pipelines/main.go)
+   6. We can have [generators](./43GoConcurrencyPatterns/generators/main.go) in the code, generating data continously and we might want to funnel that data into our pipeline which will process the data and give some meaningful output
+   7. Suppose, we have a generator generating some random numbers. We want to create a pipeline where we have Stage1 which generates the random numbers, Stage2 where we filter out the numbers which are prime and Stage3 where we accept only n prime integers from the Stage2
+      1. `STAGE 1 ----random integers----> STAGE 2 -----prime integers----> STAGE 3 -----output n prime integers---> END`
+      2. Here, if we notice the STAGE2, finding primes, is a slow stage because it involves computation of whether the integer is prime or not.
+      3. Since, we are only getting random integers in STAGE 2. The integers will not have any relation to each other. So we can scale the STAGE 2 to have multiple instances and each instance is processing (filtering prime integers) the data comming from STAGE 1.
+      4. We can then combine the results of different instances of STAGE 2 in single channel and send it to STAGE 3 for outputing n prime integers  
+         ![Fan out and fan in arch](./resources/images/fan-in-fan-out.png)
+      5. [Code](./43GoConcurrencyPatterns/processing-data-from-generator/main.go)
